@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geografická hra - Země a vlajky</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Main Menu -->
+        <div id="menu" class="screen active">
+            <h1>🌍 Geografická hra</h1>
+            <p class="subtitle">Otestuj své znalosti zemí, vlajek a hlavních měst!</p>
+
+            <div class="game-modes">
+                <button class="mode-button" onclick="startGame('flagToCountry')">
+                    <span class="mode-icon">🚩</span>
+                    <span class="mode-title">Vlajka → Země</span>
+                    <span class="mode-desc">Poznáš zemi podle vlajky?</span>
+                </button>
+
+                <button class="mode-button" onclick="startGame('countryToFlag')">
+                    <span class="mode-icon">🏴</span>
+                    <span class="mode-title">Země → Vlajka</span>
+                    <span class="mode-desc">Vyber správnou vlajku</span>
+                </button>
+
+                <button class="mode-button" onclick="startGame('capitals')">
+                    <span class="mode-icon">🏛️</span>
+                    <span class="mode-title">Hlavní města</span>
+                    <span class="mode-desc">Znáš všechna hlavní města?</span>
+                </button>
+
+                <button class="mode-button" onclick="startGame('mapLocation')">
+                    <span class="mode-icon">🗺️</span>
+                    <span class="mode-title">Mapa světa</span>
+                    <span class="mode-desc">Kde se země nachází?</span>
+                </button>
+
+                <button class="mode-button" onclick="startGame('timeAttack')">
+                    <span class="mode-icon">⏱️</span>
+                    <span class="mode-title">Časový režim</span>
+                    <span class="mode-desc">Kolik zvládneš za 60 sekund?</span>
+                </button>
+
+                <button class="mode-button" onclick="startGame('endless')">
+                    <span class="mode-icon">♾️</span>
+                    <span class="mode-title">Nekonečný režim</span>
+                    <span class="mode-desc">Hraj dokud neuděláš 3 chyby</span>
+                </button>
+            </div>
+
+            <div class="stats-preview">
+                <h3>Tvoje statistiky</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-value" id="totalGames">0</span>
+                        <span class="stat-label">Her</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="totalCorrect">0</span>
+                        <span class="stat-label">Správně</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="bestStreak">0</span>
+                        <span class="stat-label">Nejlepší série</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game" class="screen">
+            <div class="game-header">
+                <button class="btn-back" onclick="backToMenu()">← Menu</button>
+                <div class="game-info">
+                    <span id="gameMode" class="game-mode-label"></span>
+                    <div class="score-display">
+                        <span id="score">0</span> / <span id="total">0</span>
+                    </div>
+                    <div id="timerDisplay" class="timer-display" style="display: none;">
+                        ⏱️ <span id="timeLeft">60</span>s
+                    </div>
+                    <div id="livesDisplay" class="lives-display" style="display: none;">
+                        ❤️ <span id="livesLeft">3</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-container">
+                <div id="questionText" class="question-text"></div>
+                <div id="flagDisplay" class="flag-display"></div>
+            </div>
+
+            <div id="optionsContainer" class="options-container"></div>
+
+            <div id="mapContainer" class="map-container" style="display: none;">
+                <svg id="worldMap" viewBox="0 0 1000 500"></svg>
+            </div>
+
+            <div id="feedback" class="feedback"></div>
+
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results" class="screen">
+            <h2>🎉 Výsledky</h2>
+            <div class="results-content">
+                <div class="final-score">
+                    <span id="finalScore" class="big-number">0</span>
+                    <span class="score-label">správných odpovědí</span>
+                </div>
+
+                <div class="results-stats">
+                    <div class="result-item">
+                        <span class="result-label">Celkem otázek:</span>
+                        <span id="resultTotal">0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Úspěšnost:</span>
+                        <span id="resultPercent">0%</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Nejdelší série:</span>
+                        <span id="resultStreak">0</span>
+                    </div>
+                </div>
+
+                <div class="results-buttons">
+                    <button class="btn-primary" onclick="restartGame()">Hrát znovu</button>
+                    <button class="btn-secondary" onclick="backToMenu()">Hlavní menu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="countries-data.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
