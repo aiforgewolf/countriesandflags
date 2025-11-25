@@ -7,16 +7,18 @@ Interaktivní vzdělávací hra pro testování geografických znalostí. Poznej
 1. **🚩 Vlajka → Země** - Poznáš zemi podle její vlajky?
 2. **🏴 Země → Vlajka** - Vyber správnou vlajku pro danou zemi
 3. **🏛️ Hlavní města** - Otestuj své znalosti hlavních měst
-4. **🗺️ Mapa světa** - Klikni na region, kde se země nachází
+4. **🗺️ Mapa světa** - Klikni na zemi na interaktivní mapě s obrysovými hranicemi států
 5. **⏱️ Časový režim** - Kolik otázek zvládneš za 60 sekund?
 6. **♾️ Nekonečný režim** - Hraj dokud neuděláš 3 chyby
 
 ## 📊 Funkce
 
 - **80+ zemí** ze všech kontinentů
+- **Interaktivní SVG mapa** s obrysovými hranicemi jednotlivých států
 - **Statistiky a sledování postupu** uložené v prohlížeči
 - **Responzivní design** - funguje na mobilu i desktopu
-- **Plynulé animace** a vizuální feedback
+- **Plynulé animace** a vizuální feedback s hover efekty
+- **Tooltips** zobrazující názvy zemí při najetí myší
 - **Ukládání nejlepších výsledků**
 
 ## 🚀 Nasazení na GitHub Pages
@@ -68,6 +70,7 @@ countriesandflags/
 ├── styles.css          # Styly a animace
 ├── game.js            # Herní logika
 ├── countries-data.js  # Data o zemích, vlajkách a hlavních městech
+├── world-map.svg      # Interaktivní SVG mapa světa s obrysovými hranicemi států
 └── README.md          # Dokumentace
 ```
 
@@ -85,6 +88,14 @@ Pro přidání nové země do hry, edituj soubor `countries-data.js`:
     y: 250  // Y souřadnice na mapě (0-500)
 }
 ```
+
+Pro přidání obrysové hranice země do SVG mapy, edituj soubor `world-map.svg` a přidej nový `<path>` element:
+
+```xml
+<path class="country" data-country="Název země" d="M x,y L x,y ..."/>
+```
+
+**Tip:** Použij SVG editor jako Inkscape nebo online nástroj pro vytvoření obrysových path dat.
 
 ## 📝 Licence
 
