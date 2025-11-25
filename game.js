@@ -238,67 +238,76 @@ function showCapitals(question) {
 }
 
 // Map Location mode
-function showMapLocation(question) {
+async function showMapLocation(question) {
     document.getElementById('questionText').textContent = `Kde se nachází ${question.correct.name}?`;
     document.getElementById('flagDisplay').textContent = question.correct.flag;
     document.getElementById('mapContainer').style.display = 'block';
 
-    // Create simple world map with clickable regions
-    const svg = document.getElementById('worldMap');
-    svg.innerHTML = '';
+    const container = document.getElementById('mapContainer');
 
-    // Draw simplified world map
-    const mapRegions = [
-        { name: 'North America', x: 150, y: 150, width: 200, height: 150 },
-        { name: 'South America', x: 250, y: 300, width: 150, height: 200 },
-        { name: 'Europe', x: 450, y: 120, width: 150, height: 120 },
-        { name: 'Africa', x: 450, y: 240, width: 180, height: 200 },
-        { name: 'Asia', x: 600, y: 120, width: 250, height: 200 },
-        { name: 'Oceania', x: 700, y: 320, width: 200, height: 150 }
-    ];
+    // Load SVG map if not already loaded
+    if (!container.querySelector('svg')) {
+        try {
+            const response = await fetch('world-map.svg');
+            const svgText = await response.text();
+            container.innerHTML = svgText;
 
-    mapRegions.forEach(region => {
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect.setAttribute('x', region.x);
-        rect.setAttribute('y', region.y);
-        rect.setAttribute('width', region.width);
-        rect.setAttribute('height', region.height);
-        rect.setAttribute('class', 'country-path');
-        rect.setAttribute('data-region', region.name);
-        rect.onclick = () => checkMapAnswer(region.name, question.correct);
-        svg.appendChild(rect);
+            // Setup click handlers and tooltips for all countries
+            const countries = container.querySelectorAll('.country');
+            countries.forEach(countryPath => {
+                const countryName = countryPath.getAttribute('data-country');
+                countryPath.onclick = () => checkMapAnswer(countryName, question.correct, countryPath);
 
-        // Add label
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', region.x + region.width / 2);
-        text.setAttribute('y', region.y + region.height / 2);
-        text.setAttribute('text-anchor', 'middle');
-        text.setAttribute('fill', '#666');
-        text.setAttribute('font-size', '14');
-        text.setAttribute('pointer-events', 'none');
-        text.textContent = region.name;
-        svg.appendChild(text);
-    });
+                // Add tooltip on hover
+                countryPath.addEventListener('mouseenter', (e) => {
+                    countryPath.setAttribute('data-tooltip', countryName);
+                });
+            });
+        } catch (error) {
+            console.error('Error loading map:', error);
+            container.innerHTML = '<p style="color: red;">Chyba při načítání mapy. Prosím obnovte stránku.</p>';
+            return;
+        }
+    } else {
+        // Reset all countries styling
+        const countryPaths = container.querySelectorAll('.country');
+        countryPaths.forEach(path => {
+            path.classList.remove('selected', 'incorrect');
+            const countryName = path.getAttribute('data-country');
+            path.onclick = () => checkMapAnswer(countryName, question.correct, path);
+        });
+    }
 }
 
 // Check map answer
-function checkMapAnswer(selectedRegion, correct) {
-    const isCorrect = correct.region === selectedRegion ||
-                     (correct.region === 'Europe/Asia' && (selectedRegion === 'Europe' || selectedRegion === 'Asia')) ||
-                     (correct.region === 'Asia/Europe' && (selectedRegion === 'Europe' || selectedRegion === 'Asia'));
-
+function checkMapAnswer(selectedCountry, correct, countryPath) {
+    const isCorrect = selectedCountry === correct.name;
     const feedback = document.getElementById('feedback');
 
+    // Disable all clicks temporarily
+    const allCountries = document.querySelectorAll('.country');
+    allCountries.forEach(path => path.onclick = null);
+
     if (isCorrect) {
-        feedback.textContent = `✓ Správně! ${correct.name} je v ${correct.region}`;
+        countryPath.classList.add('selected');
+        feedback.textContent = `✓ Správně! ${correct.name}`;
         feedback.className = 'feedback correct';
         score++;
         currentStreak++;
         if (currentStreak > bestStreak) bestStreak = currentStreak;
     } else {
-        feedback.textContent = `✗ Špatně! ${correct.name} je v ${correct.region}`;
+        countryPath.classList.add('incorrect');
+        feedback.textContent = `✗ Špatně! Správná odpověď: ${correct.name}`;
         feedback.className = 'feedback incorrect';
         currentStreak = 0;
+
+        // Highlight correct country
+        allCountries.forEach(path => {
+            if (path.getAttribute('data-country') === correct.name) {
+                path.classList.add('selected');
+            }
+        });
+
         if (currentMode === 'endless') {
             lives--;
             document.getElementById('livesLeft').textContent = lives;

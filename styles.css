@@ -309,28 +309,69 @@ h1 {
     border-radius: 15px;
     padding: 20px;
     margin: 20px 0;
+    max-height: 600px;
+    overflow: auto;
 }
 
-#worldMap {
+.map-container svg {
     width: 100%;
     height: auto;
-    cursor: crosshair;
+    display: block;
 }
 
-.country-path {
-    fill: #ddd;
-    stroke: #999;
+/* Country paths in SVG map */
+.map-container .country {
+    fill: #e8e8e8;
+    stroke: #ffffff;
     stroke-width: 0.5;
     transition: all 0.2s ease;
+    cursor: pointer;
+    position: relative;
 }
 
-.country-path:hover {
+.map-container .country:hover {
     fill: #667eea;
+    opacity: 0.8;
+    stroke-width: 1;
 }
 
-.country-marker {
+/* Tooltip for countries */
+.map-container .country[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.map-container .country.selected {
+    fill: #28a745;
+    stroke: #1e7e34;
+    stroke-width: 1.5;
+    animation: countryPulse 0.5s ease;
+}
+
+.map-container .country.incorrect {
     fill: #dc3545;
-    opacity: 0.7;
+    stroke: #bd2130;
+    stroke-width: 1.5;
+    animation: countryShake 0.5s ease;
+}
+
+@keyframes countryPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes countryShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    75% { transform: translateX(2px); }
 }
 
 /* Results Screen */
